@@ -10,7 +10,7 @@ API_KEY=$1
 # Clearly, the following may need to be updated to fit the MySQL setup to use
 HOST="localhost"
 USER="root"
-PASSWORD="root"
+PASSWORD="oluwasayo"
 
 # This number controls the size of the final database
 EXTRAPOLATE_INTERVAL=60

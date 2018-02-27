@@ -1,14 +1,10 @@
 package com.vaadin.demo.stockdata.ui;
 
-import com.vaadin.addon.charts.Chart;
-import com.vaadin.addon.charts.model.*;
 import com.vaadin.data.provider.DataProvider;
 import com.vaadin.demo.stockdata.backend.db.demodata.stockdata.symbol.Symbol;
 import com.vaadin.demo.stockdata.backend.service.Service;
 import com.vaadin.ui.common.HtmlImport;
 import com.vaadin.ui.grid.Grid;
-import com.vaadin.ui.html.Div;
-import com.vaadin.ui.renderers.ComponentTemplateRenderer;
 import com.vaadin.ui.renderers.TemplateRenderer;
 
 import java.time.LocalDate;
