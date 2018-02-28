@@ -1,10 +1,9 @@
 package com.vaadin.demo.stockdata;
 
+import com.vaadin.flow.server.ServiceInitEvent;
+import com.vaadin.flow.server.VaadinServiceInitListener;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-
-import com.vaadin.server.ServiceInitEvent;
-import com.vaadin.server.VaadinServiceInitListener;
 
 public class ApplicationServiceInitListener implements VaadinServiceInitListener {
 

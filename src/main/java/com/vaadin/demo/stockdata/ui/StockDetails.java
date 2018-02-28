@@ -3,11 +3,11 @@ package com.vaadin.demo.stockdata.ui;
 import com.vaadin.demo.stockdata.backend.db.demodata.stockdata.symbol.Symbol;
 import com.vaadin.demo.stockdata.backend.db.demodata.stockdata.symbol.generated.GeneratedSymbol;
 import com.vaadin.demo.stockdata.backend.service.Service;
-import com.vaadin.flow.model.TemplateModel;
-import com.vaadin.ui.Tag;
-import com.vaadin.ui.common.ClientDelegate;
-import com.vaadin.ui.common.HtmlImport;
-import com.vaadin.ui.polymertemplate.PolymerTemplate;
+import com.vaadin.flow.component.ClientDelegate;
+import com.vaadin.flow.component.Tag;
+import com.vaadin.flow.component.dependency.HtmlImport;
+import com.vaadin.flow.component.polymertemplate.PolymerTemplate;
+import com.vaadin.flow.templatemodel.TemplateModel;
 
 import java.time.LocalDate;
 import java.util.Arrays;

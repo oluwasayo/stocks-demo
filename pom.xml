@@ -99,11 +99,6 @@
             <artifactId>vaadin-charts-flow</artifactId>
             <version>${vaadin.charts.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-charts-webjar</artifactId>
-            <version>6.0.0-alpha5</version>
-        </dependency>
 
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -117,32 +112,6 @@
             <version>1.9.2</version>
             <type>jar</type>
         </dependency>
-
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>flow-server</artifactId>
-            <version>${flow.project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>flow-push</artifactId>
-            <version>${flow.project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>flow-client</artifactId>
-            <version>${flow.project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>flow-data</artifactId>
-            <version>${flow.project.version}</version>
-        </dependency>
-
-        <!--<dependency>-->
-            <!--<groupId>org.webjars.bower</groupId>-->
-            <!--<artifactId>vaadin-valo-theme</artifactId>-->
-        <!--</dependency>-->
 
         <dependency>
             <groupId>mysql</groupId>

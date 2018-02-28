@@ -1,11 +1,11 @@
 package com.vaadin.demo.stockdata.ui;
 
-import com.vaadin.data.provider.DataProvider;
 import com.vaadin.demo.stockdata.backend.db.demodata.stockdata.symbol.Symbol;
 import com.vaadin.demo.stockdata.backend.service.Service;
-import com.vaadin.ui.common.HtmlImport;
-import com.vaadin.ui.grid.Grid;
-import com.vaadin.ui.renderers.TemplateRenderer;
+import com.vaadin.flow.component.dependency.HtmlImport;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.renderer.TemplateRenderer;
 
 import java.time.LocalDate;
 import java.util.List;

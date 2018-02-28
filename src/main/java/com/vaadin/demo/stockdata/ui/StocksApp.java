@@ -15,13 +15,12 @@
  */
 package com.vaadin.demo.stockdata.ui;
 
-import com.vaadin.router.PageTitle;
-import com.vaadin.router.Route;
-import com.vaadin.ui.common.HtmlImport;
-import com.vaadin.ui.html.Div;
 
+import com.vaadin.flow.component.dependency.HtmlImport;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.router.PageTitle;
 
-@Route("")
+//@Route("")
 @HtmlImport("frontend://styles.html")
 @PageTitle("Vaadin Stocks")
 public class StocksApp extends Div {
