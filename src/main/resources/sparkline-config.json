@@ -1,0 +1,62 @@
+{
+  "chart": {
+    "backgroundColor": null,
+    "borderWidth": 0,
+    "type": "line",
+    "margin": [2, 0, 2, 0],
+    "width": 120,
+    "height": 20,
+    "style": {
+      "overflow": "visible"
+    },
+    "skipClone": true
+  },
+  "title": {
+    "text": ""
+  },
+  "credits": {
+    "enabled": false
+  },
+  "xAxis": {
+    "labels": {
+      "enabled": false
+    },
+    "title": {
+      "text": null
+    },
+    "startOnTick": false,
+    "endOnTick": false,
+    "tickPositions": []
+  },
+  "yAxis": {
+    "endOnTick": false,
+    "startOnTick": false,
+    "labels": {
+      "enabled": false
+    },
+    "title": {
+      "text": null
+    },
+    "tickPositions": [0]
+  },
+  "legend": {
+    "enabled": false
+  },
+  "exporting": {
+    "enabled": false
+  },
+  "tooltip": {
+    "enabled": false
+  },
+  "plotOptions": {
+    "series": {
+      "animation": false,
+      "lineWidth": 1,
+      "shadow": false,
+      "fillOpacity": 0.25,
+      "marker": {
+        "enabled": false
+      }
+    }
+  }
+}

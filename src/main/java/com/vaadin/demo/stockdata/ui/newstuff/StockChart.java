@@ -6,20 +6,31 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.charts.Chart;
 import elemental.json.JsonValue;
 import elemental.json.impl.JreJsonFactory;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.charset.Charset;
 
 public class StockChart extends Chart {
+
+    private static final Logger L = LoggerFactory.getLogger(StockChart.class);
 
     @Override
     public void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
 
-        JsonValue extremesHook = new JreJsonFactory().parse(
-                "{\"xAxis\": {\"events\": {\"_fn_setExtremes\": \"function(event) { console.error(event.DOMEvent); " +
-                        "var valid = event.DOMEvent.path && event.DOMEvent.path[6] && event.DOMEvent.path[6].localName === 'vaadin-chart'; " +
-                        "if (valid) { event.DOMEvent.path[6].$server.setExtremes(event.min, event.max); }" +
-                        "}\" } } }");
-
-        UI.getCurrent().getPage().executeJavaScript("$0.update($1)", this.getElement(), extremesHook);
+        attachEvent.getUI().beforeClientResponse(this, () -> {
+            try {
+                final JsonValue extremesHook = new JreJsonFactory().parse(
+                        IOUtils.toString(getClass().getResourceAsStream(
+                                "/extremes-hook.json"), Charset.forName("UTF-8")));
+                UI.getCurrent().getPage().executeJavaScript("$0.update($1)", this.getElement(), extremesHook);
+            } catch (IOException e) {
+                L.warn("Unable to find extremes hook. This stock chart will not listen to extremes events.");
+            }
+        });
     }
 
     @ClientDelegate

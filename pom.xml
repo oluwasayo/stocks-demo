@@ -96,6 +96,12 @@
 
         <dependency>
             <groupId>com.vaadin</groupId>
+            <artifactId>flow</artifactId>
+            <version>${flow.project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.vaadin</groupId>
             <artifactId>vaadin-charts-flow</artifactId>
             <version>${vaadin.charts.version}</version>
         </dependency>

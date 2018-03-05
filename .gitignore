@@ -8,3 +8,4 @@ rebel.xml
 **/build/
 **/node_modules
 **/node
+**/bower_components
