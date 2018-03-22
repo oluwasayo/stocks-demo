@@ -33,7 +33,7 @@ public class SparklineChart extends Chart {
     public void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
 
-        attachEvent.getUI().beforeClientResponse(this, () -> {
+        attachEvent.getUI().beforeClientResponse(this, (context) -> {
             try {
                 final JsonValue sparklineConfig = new JreJsonFactory().parse(
                         IOUtils.toString(getClass().getResourceAsStream(

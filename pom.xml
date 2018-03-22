@@ -18,15 +18,15 @@
         <failOnMissingWebXml>false</failOnMissingWebXml>
 
         <!-- Dependencies -->
-        <vaadin.platform.version>10.0.0.alpha21</vaadin.platform.version>
-        <vaadin.charts.version>6.0.0.alpha15</vaadin.charts.version>
+        <vaadin.platform.version>10.0.0.beta2</vaadin.platform.version>
+        <vaadin.charts.version>6.0-SNAPSHOT</vaadin.charts.version>
         <!-- Needed for production mode -->
-        <flow.project.version>1.0.0.alpha22</flow.project.version>
+        <flow.project.version>1.0.0.beta3</flow.project.version>
         <servlet.api.version>3.1.0</servlet.api.version>
         <selenium.server.version>3.4.0</selenium.server.version>
 
         <!-- Plugins -->
-        <frontend.maven.plugin.version>1.5</frontend.maven.plugin.version>
+        <frontend.maven.plugin.version>1.6</frontend.maven.plugin.version>
         <jetty.version>9.3.7.v20160115</jetty.version>
         <maven.clean.plugin.version>3.0.0</maven.clean.plugin.version>
         <maven.war.plugin.version>3.1.0</maven.war.plugin.version>
@@ -118,6 +118,11 @@
             <version>1.9.2</version>
             <type>jar</type>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.12</version>
+        </dependency>
 
         <dependency>
             <groupId>mysql</groupId>
@@ -175,6 +180,31 @@
                         </fileset>
                     </filesets>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>${frontend.maven.plugin.version}</version>
+                <configuration>
+                    <nodeVersion>v8.9.0</nodeVersion>
+                    <yarnVersion>v1.3.2</yarnVersion>
+                    <workingDirectory>build-tools</workingDirectory>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <id>install-tools-then-build</id>
+                        <goals>
+                            <goal>install-node-and-yarn</goal>
+                            <goal>yarn</goal>
+                        </goals>
+                        <configuration>
+                            <workingDirectory>build-tools</workingDirectory>
+                            <arguments>run install-bower-dependencies</arguments>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>

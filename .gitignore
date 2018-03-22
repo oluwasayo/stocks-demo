@@ -9,3 +9,4 @@ rebel.xml
 **/node_modules
 **/node
 **/bower_components
+package-lock.json

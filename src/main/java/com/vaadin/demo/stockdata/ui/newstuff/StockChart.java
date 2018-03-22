@@ -17,11 +17,12 @@ public class StockChart extends Chart {
 
     private static final Logger L = LoggerFactory.getLogger(StockChart.class);
 
+    // TODO(oluwasayo): Consider debouncing this callback.
     @Override
     public void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
 
-        attachEvent.getUI().beforeClientResponse(this, () -> {
+        attachEvent.getUI().beforeClientResponse(this, (context) -> {
             try {
                 final JsonValue extremesHook = new JreJsonFactory().parse(
                         IOUtils.toString(getClass().getResourceAsStream(

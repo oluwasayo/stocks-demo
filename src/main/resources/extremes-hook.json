@@ -1,7 +1,7 @@
 {
   "xAxis": {
     "events": {
-      "_fn_setExtremes": "function(event) { var valid = event.DOMEvent.path && event.DOMEvent.path[6] && event.DOMEvent.path[6].localName === 'vaadin-chart'; if (valid) { event.DOMEvent.path[6].$server.setExtremes(event.min, event.max); } }"
+      "_fn_setExtremes": "function(event) { var valid = event && event.DOMEvent && event.DOMEvent.path && event.DOMEvent.path[6] && event.DOMEvent.path[6].localName === 'vaadin-chart'; if (valid) { event.DOMEvent.path[6].$server.setExtremes(event.min, event.max); } }"
     }
   }
 }

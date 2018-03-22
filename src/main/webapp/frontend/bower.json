@@ -18,6 +18,6 @@
     "paper-toast": "2.0.0",
     "paper-dialog": "2.0.0",
     "vaadin-core": "2.0.0-alpha3",
-    "vaadin-charts": "#master"
+    "vaadin-charts": "#chart-initialization"
   }
 }
