@@ -1,0 +1,140 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/vaadin-charts/vaadin-chart.html">
+
+<dom-module id="sparkline-stuff">
+  <template>
+    <style include="vaadin-chart-default-theme">
+      .highcharts-background {
+        fill: rgba(255,255,255,0);
+        color: rgba(255,255,255,0);
+      }
+
+      .highcharts-graph {
+        stroke-width: 1px;
+      }
+
+      .highcharts-tracker {
+        display: none;
+      }
+
+      .highcharts-graph:hover {
+        animation: breathe 5s ease-out infinite;
+      }
+
+      .highcharts-axis, .highcharts-grid, .highcharts-markers {
+        display: none;
+      }
+
+      .appreciating {
+        stroke: #73e600;
+      }
+
+      .declining {
+        stroke: red;
+      }
+
+      @keyframes breathe {
+        0% { stroke-width: 1px }
+        40% { stroke-width: 3px }
+        60% { stroke-width: 3px }
+        100% { stroke-width: 1px }
+      }
+    </style>
+
+    <div id="chart"></div>
+    <slot id="slot"></slot>
+  </template>
+
+  <script>
+    class SparklineElement extends window.Vaadin.ChartElement {
+      static get is() {
+        return 'sparkline-stuff'
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
+        this.update({
+          chart: {
+            backgroundColor: null,
+            borderWidth: 0,
+            type: 'line',
+            margin: [2, 0, 2, 0],
+            width: 120,
+            height: 20,
+            style: {
+              overflow: 'visible'
+            },
+            skipClone: true
+          },
+          title: {
+            text: ''
+          },
+          credits: {
+            enabled: false
+          },
+          xAxis: {
+            labels: {
+              enabled: false
+            },
+            title: {
+              text: null
+            },
+            startOnTick: false,
+            endOnTick: false,
+            tickPositions: []
+          },
+          yAxis: {
+            endOnTick: false,
+            startOnTick: false,
+            labels: {
+              enabled: false
+            },
+            title: {
+              text: null
+            },
+            tickPositions: [0]
+          },
+          legend: {
+            enabled: false
+          },
+          exporting: {
+            enabled: false
+          },
+          tooltip: {
+            enabled: false
+          },
+          plotOptions: {
+            series: {
+              animation: false,
+              lineWidth: 1,
+              shadow: false,
+              fillOpacity: 0.25,
+              marker: {
+                enabled: false
+              }
+            }
+          }
+        });
+        this.applyTrend();
+      }
+
+      update(configuration, reset) {
+        super.update(configuration, reset);
+
+        if (configuration.series && configuration.series[0].data) {
+          const tailData = configuration.series[0].data.slice(-2).map(e => e.y);
+          this.trend = tailData.length > 1 && tailData[0] > tailData[1] ? "declining" : "appreciating";
+          if (this.$) this.applyTrend();
+        }
+      }
+
+      applyTrend() {
+        Polymer.RenderStatus.beforeNextRender(this, () => {
+          this.$.chart.querySelector(".highcharts-graph").classList.add(this.trend);
+        });
+      }
+    }
+
+    customElements.define(SparklineElement.is, SparklineElement);
+  </script>
+</dom-module>

@@ -12,7 +12,9 @@ import com.vaadin.flow.component.charts.model.PlotOptionsSeries;
 import com.vaadin.flow.component.charts.model.RangeSelector;
 import com.vaadin.flow.component.charts.model.Tooltip;
 import com.vaadin.flow.component.charts.model.YAxis;
+import com.vaadin.flow.component.charts.util.ChartSerialization;
 import com.vaadin.flow.component.dependency.HtmlImport;
+import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.page.BodySize;
@@ -28,7 +30,7 @@ import java.util.stream.Stream;
 
 @Route("")
 @Theme(Lumo.class)
-@HtmlImport("frontend://styles.html")
+@StyleSheet("frontend://newstuff/default.css")
 @BodySize(height = "100vh", width = "100vw")
 public class MainView extends HorizontalLayout {
 
@@ -46,6 +48,7 @@ public class MainView extends HorizontalLayout {
         grid.setHeight("100%");
         grid.setWidth("300px");
         grid.getStyle().set("max-width", "350px");
+        grid.setSelectionMode(Grid.SelectionMode.SINGLE);
 
         grid.setItems(Stream.generate(() -> {
             SparklineChart chart = new SparklineChart(randomName(), randomShares(), randomPrice());
