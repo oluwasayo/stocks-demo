@@ -12,13 +12,12 @@ import com.vaadin.flow.component.charts.model.PlotOptionsSeries;
 import com.vaadin.flow.component.charts.model.RangeSelector;
 import com.vaadin.flow.component.charts.model.Tooltip;
 import com.vaadin.flow.component.charts.model.YAxis;
-import com.vaadin.flow.component.charts.util.ChartSerialization;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.page.BodySize;
-import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.TemplateRenderer;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
@@ -31,41 +30,45 @@ import java.util.stream.Stream;
 @Route("")
 @Theme(Lumo.class)
 @StyleSheet("frontend://newstuff/default.css")
+@HtmlImport("frontend://newstuff/sparkline-chart.html")
 @BodySize(height = "100vh", width = "100vw")
 public class MainView extends HorizontalLayout {
 
     private final Random randomGen = new Random();
 
-    private Grid<SparklineChart> grid;
+    private Grid<StockItem> grid;
 
     public MainView() {
         setSizeFull();
         grid = new Grid<>();
-        grid.addColumn(SparklineChart::getNasdaqCode).setWidth("55px");
-        // TODO(oluwasayo): Use a template renderer instead
-        grid.addColumn(new ComponentRenderer<>(e -> e));
+        grid.addColumn(StockItem::getNasdaqCode).setWidth("55px");
+        grid.addColumn(TemplateRenderer.<StockItem> of(
+                "<sparkline-chart>" +
+                    "<vaadin-chart-series values=[[item.historicalData]]></vaadin-chart-series>" +
+                "</sparkline-chart>")
+                .withProperty("historicalData", StockItem::getHistoricalData));
         grid.addColumn(e -> String.format("%.2f", e.getPrice())).setWidth("55px");
         grid.setHeight("100%");
         grid.setWidth("300px");
         grid.getStyle().set("max-width", "350px");
         grid.setSelectionMode(Grid.SelectionMode.SINGLE);
 
-        grid.setItems(Stream.generate(() -> {
-            SparklineChart chart = new SparklineChart(randomName(), randomShares(), randomPrice());
-            DataSeries dataSeries = new DataSeries();
-            dataSeries.setData(Stream.generate(this::randomPrice).limit(10).toArray(Number[]::new));
-            chart.getConfiguration().addSeries(dataSeries);
-            return chart;
-        }).limit(1000).collect(Collectors.toList()));
+        grid.setItems(
+                Stream.generate(() -> new StockItem(randomName(), randomShares(), randomPrice(),
+                        Stream.generate(this::randomPrice).limit(10).mapToDouble(Double::new).toArray()))
+                .limit(1000)
+                .collect(Collectors.toList()));
 
         Chart detailChart = newDetailChart();
         detailChart.setWidth("100%");
+        detailChart.addListener(AxisExtremesEvent.class,
+                event -> System.out.printf("LAMBDA: [min=%.2f, max=%.2f]\n", event.getMin(), event.getMax()));
 
         super.add(grid, detailChart);
     }
 
     private Chart newDetailChart() {
-        final Chart chart = new StockChart();
+        final Chart chart = new Chart();
         chart.setTimeline(true);
 
         Configuration configuration = chart.getConfiguration();
@@ -110,7 +113,6 @@ public class MainView extends HorizontalLayout {
 
         Navigator navigator = new Navigator();
         navigator.setAdaptToUpdatedData(false);
-//        navigator.set
         configuration.setNavigator(navigator);
 
         return chart;

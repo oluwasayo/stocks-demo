@@ -1,7 +1,7 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/vaadin-charts/vaadin-chart.html">
 
-<dom-module id="sparkline-stuff">
+<dom-module id="sparkline-chart">
   <template>
     <style include="vaadin-chart-default-theme">
       .highcharts-background {
@@ -48,7 +48,7 @@
   <script>
     class SparklineElement extends window.Vaadin.ChartElement {
       static get is() {
-        return 'sparkline-stuff'
+        return 'sparkline-chart'
       }
 
       connectedCallback() {
@@ -118,19 +118,32 @@
         this.applyTrend();
       }
 
-      update(configuration, reset) {
-        super.update(configuration, reset);
+      __addSeries(series) {
+        super.__addSeries(series);
 
-        if (configuration.series && configuration.series[0].data) {
-          const tailData = configuration.series[0].data.slice(-2).map(e => e.y);
-          this.trend = tailData.length > 1 && tailData[0] > tailData[1] ? "declining" : "appreciating";
-          if (this.$) this.applyTrend();
+        if (this.__isSeriesEmpty(series)) {
+          return;
+        }
+
+        for (let i = 0, len = series.length; i < len; i++) {
+          const seriesElement = series[i];
+          if (seriesElement.options && seriesElement.options.data) {
+            const tailData = seriesElement.options.data.slice(-2).map(e => e.y);
+            this.trend = tailData.length > 1 && tailData[0] > tailData[1] ? "declining" : "appreciating";
+            if (this.$) this.applyTrend();
+            return;
+          }
         }
       }
 
       applyTrend() {
         Polymer.RenderStatus.beforeNextRender(this, () => {
-          this.$.chart.querySelector(".highcharts-graph").classList.add(this.trend);
+          setTimeout(() => {
+            const graph = this.$.chart.querySelector(".highcharts-graph");
+            if (graph) {
+              graph.classList.add(this.trend);
+            }
+          });
         });
       }
     }
