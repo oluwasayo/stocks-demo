@@ -182,6 +182,7 @@
                 </configuration>
             </plugin>
 
+            <!--Drop this and use webjars instead (after a new Charts version is released).-->
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
@@ -311,6 +312,7 @@
 
             <build>
                 <plugins>
+                    <!--Drop this and use vaadin-maven-plugin-->
                     <plugin>
                         <groupId>com.github.eirslett</groupId>
                         <artifactId>frontend-maven-plugin</artifactId>
