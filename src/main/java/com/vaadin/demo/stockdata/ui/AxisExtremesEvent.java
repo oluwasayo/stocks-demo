@@ -1,10 +1,11 @@
-package com.vaadin.demo.stockdata.ui.newstuff;
+package com.vaadin.demo.stockdata.ui;
 
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.DomEvent;
 import com.vaadin.flow.component.EventData;
 import com.vaadin.flow.component.charts.Chart;
 
+// This won't be needed after this week as a better version of it will be in vaadin-charts-flow
 @DomEvent("axis-extremes")
 public class AxisExtremesEvent extends ComponentEvent<Chart> {
 

@@ -1,8 +1,19 @@
-package com.vaadin.demo.stockdata.ui.newstuff;
+package com.vaadin.demo.stockdata.ui;
 
 import com.vaadin.flow.component.charts.Chart;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class StockItem extends Chart {
+
+    private static final Map<String, String> TRENDS;
+
+    static {
+        TRENDS = new HashMap<>();
+        TRENDS.put("declining", "#ff0000cc");
+        TRENDS.put("appreciating", "#00dd00cc");
+    }
 
     private final String nasdaqCode;
     private final int numOfShares;
@@ -25,11 +36,20 @@ public class StockItem extends Chart {
         return numOfShares;
     }
 
-    public double getPrice() {
-        return price;
+    public String getPrice() {
+        return String.format("%.2f", price);
     }
 
     public double[] getHistoricalData() {
         return historicalData;
+    }
+
+    public String getTrend() {
+        int length = historicalData.length;
+        return historicalData[length - 2] > historicalData[length - 1] ? "declining" : "appreciating";
+    }
+
+    public String getTrendColor() {
+        return TRENDS.get(getTrend());
     }
 }
