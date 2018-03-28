@@ -16,22 +16,28 @@ import com.vaadin.flow.component.charts.model.YAxis;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.icon.VaadinIcons;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.BodySize;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.TemplateRenderer;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Comparator.comparingDouble;
+import static java.util.stream.Collectors.toList;
 
 @Route("")
 @Theme(Lumo.class) // Remove sidebar night mode from ApplicationServiceInitListener if undesired.
@@ -71,7 +77,7 @@ public class MainView extends HorizontalLayout {
                 .setWidth("65px");
 
         grid.setHeight("100%");
-        grid.setWidth("300px");
+        grid.getStyle().set("min-width", "370px");
         grid.getStyle().set("max-width", "370px");
         grid.setSelectionMode(Grid.SelectionMode.SINGLE);
 
@@ -79,22 +85,46 @@ public class MainView extends HorizontalLayout {
         List<StockItem> stockItems = Stream.generate(() -> {
             double[] data = Stream.generate(this::randomPrice).limit(10).mapToDouble(Double::new).toArray();
             return new StockItem(randomName(), randomShares(), randomPrice(), data);
-        }).limit(10000).collect(Collectors.toList());
+        }).limit(10000).collect(toList());
 
         grid.setItems(stockItems);
 
         detailChart = newDetailChart();
+        detailChart.setClassName(stockItems.get(0).getTrend());
 
-        grid.select(stockItems.get(0));
-
-        //  Make new chart with random data. Ideally this new chart should have data points fetched from SERVICE.
-        grid.addSelectionListener(event -> {
+        // Make new chart with random data. Ideally this new chart should have data points fetched from SERVICE.
+        // Do nothing if grid item is deselected.
+        grid.addSelectionListener(event -> event.getFirstSelectedItem().ifPresent(item -> {
             this.remove(detailChart);
             detailChart = newDetailChart();
+            detailChart.setClassName(item.getTrend());
             this.add(detailChart);
+        }));
+
+        TextField searchField = new TextField();
+        searchField.setPrefixComponent(VaadinIcons.SEARCH.create());
+        searchField.setPlaceholder("Search by stock");
+        searchField.setWidth("100%");
+        searchField.getStyle().set("margin", "10px 15px 5px 15px");
+        searchField.setValueChangeMode(ValueChangeMode.EAGER);
+        searchField.addValueChangeListener(event -> {
+            List<StockItem> filteredItems = stockItems.stream().filter(e ->
+                    e.getNasdaqCode().contains(event.getValue())).collect(toList());
+            grid.setItems(filteredItems);
+            grid.deselectAll();
+            if (!filteredItems.isEmpty()) {
+                grid.select(filteredItems.get(0));
+            }
         });
 
-        super.add(grid, detailChart);
+        HorizontalLayout searchBar = new HorizontalLayout();
+        searchBar.setWidth("100%");
+        searchBar.add(searchField);
+
+        grid.getElement().setAttribute("theme", "no-border no-row-borders");
+
+        VerticalLayout sideBar = new VerticalLayout(searchBar, grid);
+        super.add(sideBar, detailChart);
     }
 
     private Chart newDetailChart() {
@@ -131,12 +161,6 @@ public class MainView extends HorizontalLayout {
         Pair<Number, Number> minMax = findMinMax(aaplSeries);
         yAxis.setExtremes(minMax.getLeft(), minMax.getRight());
 
-        // Color the chart based on trend.
-        int size = aaplSeries.getData().size();
-        String trend = aaplSeries.getData().get(size - 2).getY().doubleValue() >
-                aaplSeries.getData().get(size - 1).getY().doubleValue() ? "declining" : "appreciating";
-        chart.setClassName(trend);
-
         PlotOptionsSeries plotOptionsSeries = new PlotOptionsSeries();
         Marker marker = new Marker();
         marker.setEnabled(true);
@@ -160,22 +184,27 @@ public class MainView extends HorizontalLayout {
         chart.addListener(XAxisExtremesEvent.class, event -> {
             List<DataSeriesItem> randomDataWithinRange = randomDataSeriesItems().stream()
                     .filter(e -> e.getX().doubleValue() >= event.getMin() && e.getX().doubleValue() <= event.getMax())
-                    .collect(Collectors.toList());
+                    .collect(toList());
 
             aaplSeries.setData(randomDataWithinRange);
             aaplSeries.updateSeries();
 
             Pair<Number, Number> newMinMax = findMinMax(aaplSeries);
-            configuration.fireAxesRescaled(yAxis, newMinMax.getLeft(), newMinMax.getRight(), false, false);
+            configuration.fireAxesRescaled(yAxis, newMinMax.getLeft(), newMinMax.getRight(), true, true);
 
-            System.out.println("XAxis rescaled! Sending fine-grained data for: " + event.getMin() + " - " + event.getMax());
+            System.out.println("XAxis rescaled! Sending fine-grained data for: "
+                    + toPrettyDate(event.getMin()) + " - " + toPrettyDate(event.getMax()));
         });
 
-        // Listen to x-axis extremes. Not needed for this demo.
+        // Listen to y-axis extremes. Not needed for this demo, just to show how it could be done.
         chart.addListener(YAxisExtremesEvent.class, event ->
                 System.out.println("YAxis rescaled! New range: " + event.getMin() + " - " + event.getMax()));
 
         return chart;
+    }
+
+    private String toPrettyDate(Double millis) {
+        return new SimpleDateFormat("MMM dd, yyyy").format(new Date(millis.longValue()));
     }
 
     private Pair<Number, Number> findMinMax(DataSeries aaplSeries) {
