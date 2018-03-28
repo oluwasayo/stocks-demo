@@ -13,13 +13,14 @@ public class ApplicationServiceInitListener implements VaadinServiceInitListener
             Document document = response.getDocument();
 
             Element head = document.head();
-
             head.appendChild(createMeta(document, "viewport",
                     "width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes"));
             head.appendChild(createMeta(document,
                     "apple-mobile-web-app-capable", "yes"));
             head.appendChild(createMeta(document,
                     "apple-mobile-web-app-status-bar-style", "black"));
+
+            document.body().attr("theme", "dark");
         });
     }
 

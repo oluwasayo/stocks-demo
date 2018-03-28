@@ -6,8 +6,8 @@ import com.vaadin.flow.component.EventData;
 import com.vaadin.flow.component.charts.Chart;
 
 // This won't be needed after this week as a better version of it will be in vaadin-charts-flow
-@DomEvent("axis-extremes")
-public class AxisExtremesEvent extends ComponentEvent<Chart> {
+@DomEvent("xaxes-extremes-set")
+public class XAxisExtremesEvent extends ComponentEvent<Chart> {
 
     private Double min;
     private Double max;
@@ -19,9 +19,9 @@ public class AxisExtremesEvent extends ComponentEvent<Chart> {
      * @param source     the source component
      * @param fromClient <code>true</code> if the event originated from the client
      */
-    public AxisExtremesEvent(Chart source, boolean fromClient,
-                             @EventData("event.detail.originalEvent.min") Double min,
-                             @EventData("event.detail.originalEvent.max") Double max) {
+    public XAxisExtremesEvent(Chart source, boolean fromClient,
+                              @EventData("event.detail.originalEvent.min") Double min,
+                              @EventData("event.detail.originalEvent.max") Double max) {
         super(source, fromClient);
         this.min = min;
         this.max = max;

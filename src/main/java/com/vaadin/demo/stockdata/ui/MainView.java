@@ -34,7 +34,7 @@ import java.util.stream.Stream;
 import static java.util.Comparator.comparingDouble;
 
 @Route("")
-@Theme(Lumo.class)
+@Theme(Lumo.class) // Remove sidebar night mode from ApplicationServiceInitListener if undesired.
 @StyleSheet("frontend://style.css")
 @HtmlImport("frontend://speedment-chart-theme.html")
 @HtmlImport("frontend://sparkline-chart.html")
@@ -154,18 +154,26 @@ public class MainView extends HorizontalLayout {
 
         chart.setWidth("100%");
 
-        // Listen to extremes event and send random data within range. Ideally this should be fetched from SERVICE.
+        // Listen to x-axis extremes event and send random data within range. Ideally this should be fetched from SERVICE.
         // This could also be done with a vaadin-date-picker for start and end because currently lots of this
         // extremes events get generated for a simple drag so not very efficient (unless debounced).
-        chart.addListener(AxisExtremesEvent.class, event -> {
+        chart.addListener(XAxisExtremesEvent.class, event -> {
             List<DataSeriesItem> randomDataWithinRange = randomDataSeriesItems().stream()
                     .filter(e -> e.getX().doubleValue() >= event.getMin() && e.getX().doubleValue() <= event.getMax())
                     .collect(Collectors.toList());
+
             aaplSeries.setData(randomDataWithinRange);
+            aaplSeries.updateSeries();
+
             Pair<Number, Number> newMinMax = findMinMax(aaplSeries);
             configuration.fireAxesRescaled(yAxis, newMinMax.getLeft(), newMinMax.getRight(), false, false);
-            aaplSeries.updateSeries();
+
+            System.out.println("XAxis rescaled! Sending fine-grained data for: " + event.getMin() + " - " + event.getMax());
         });
+
+        // Listen to x-axis extremes. Not needed for this demo.
+        chart.addListener(YAxisExtremesEvent.class, event ->
+                System.out.println("YAxis rescaled! New range: " + event.getMin() + " - " + event.getMax()));
 
         return chart;
     }
