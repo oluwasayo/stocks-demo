@@ -1,6 +1,8 @@
 package com.vaadin.demo.stockdata.ui;
 
+import com.vaadin.flow.component.DomEvent;
 import com.vaadin.flow.component.charts.Chart;
+import com.vaadin.flow.component.charts.events.XAxesExtremesSetEvent;
 import com.vaadin.flow.component.charts.model.ChartType;
 import com.vaadin.flow.component.charts.model.Configuration;
 import com.vaadin.flow.component.charts.model.DataSeries;
@@ -46,6 +48,10 @@ import static java.util.stream.Collectors.toList;
 @HtmlImport("frontend://sparkline-chart.html")
 @BodySize(height = "100vh", width = "100vw")
 public class MainView extends HorizontalLayout {
+
+    // Workaround for https://github.com/vaadin/flow/issues/4017
+    public static final String EXTREMES_EVENT_DATA_MIN = "event.detail.originalEvent.min";
+    public static final String EXTREMES_EVENT_DATA_MAX = "event.detail.originalEvent.max";
 
     private final Random randomGen = new Random();
 
@@ -179,11 +185,12 @@ public class MainView extends HorizontalLayout {
         chart.setWidth("100%");
 
         // Listen to x-axis extremes event and send random data within range. Ideally this should be fetched from SERVICE.
-        // This could also be done with a vaadin-date-picker for start and end because currently lots of this
-        // extremes events get generated for a simple drag so not very efficient (unless debounced).
-        chart.addListener(XAxisExtremesEvent.class, event -> {
+        // Using the low-level Element API should no longer be required after https://github.com/vaadin/flow/issues/4017
+        chart.getElement().addEventListener(XAxesExtremesSetEvent.class.getAnnotation(DomEvent.class).value(), event -> {
+            final double min = event.getEventData().getNumber(EXTREMES_EVENT_DATA_MIN);
+            final double max = event.getEventData().getNumber(EXTREMES_EVENT_DATA_MAX);
             List<DataSeriesItem> randomDataWithinRange = randomDataSeriesItems().stream()
-                    .filter(e -> e.getX().doubleValue() >= event.getMin() && e.getX().doubleValue() <= event.getMax())
+                    .filter(e -> e.getX().doubleValue() >= min && e.getX().doubleValue() <= max)
                     .collect(toList());
 
             aaplSeries.setData(randomDataWithinRange);
@@ -193,12 +200,11 @@ public class MainView extends HorizontalLayout {
             configuration.fireAxesRescaled(yAxis, newMinMax.getLeft(), newMinMax.getRight(), true, true);
 
             System.out.println("XAxis rescaled! Sending fine-grained data for: "
-                    + toPrettyDate(event.getMin()) + " - " + toPrettyDate(event.getMax()));
-        });
-
-        // Listen to y-axis extremes. Not needed for this demo, just to show how it could be done.
-        chart.addListener(YAxisExtremesEvent.class, event ->
-                System.out.println("YAxis rescaled! New range: " + event.getMin() + " - " + event.getMax()));
+                    + toPrettyDate(min) + " - " + toPrettyDate(max));
+        })
+        .addEventData(EXTREMES_EVENT_DATA_MIN)
+        .addEventData(EXTREMES_EVENT_DATA_MAX)
+        .debounce(400);
 
         return chart;
     }
